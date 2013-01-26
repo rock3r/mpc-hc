@@ -342,7 +342,7 @@ bool CMPlayerCApp::StoreSettingsToIni()
     if (!::PathFileExists(m_pszProfileName)) { // don't overwrite existing ini file
         HANDLE hFile = ::CreateFile(m_pszProfileName, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
         if (hFile != INVALID_HANDLE_VALUE) {
-            const TCHAR pszComments[] = _T("; Media Player Classic - Home Cinema");
+            const TCHAR pszComments[] = _T("; MPC-HC");
             WORD wBOM = 0xFEFF; // UTF16-LE BOM (FFFE)
             DWORD nBytes;
             ::WriteFile(hFile, &wBOM, sizeof(WORD), &nBytes, NULL);
@@ -417,7 +417,7 @@ bool CMPlayerCApp::GetAppSavePath(CString& path)
             return false;
         }
         CPath p;
-        p.Combine(path, _T("Media Player Classic"));
+        p.Combine(path, _T("MPC-HC"));
         path = (LPCTSTR)p;
     }
 
@@ -1023,7 +1023,7 @@ BOOL CMPlayerCApp::InitInstance()
     if (!IsIniValid()) {
         CRegKey key;
         CString exePath = GetProgramPath(true);
-        if (ERROR_SUCCESS == key.Create(HKEY_CURRENT_USER, _T("Software\\Gabest\\Media Player Classic"))) {
+        if (ERROR_SUCCESS == key.Create(HKEY_CURRENT_USER, _T("Software\\Gabest\\MPC-HC"))) {
             key.SetStringValue(_T("ExePath"), exePath);
         }
     }
@@ -1734,7 +1734,7 @@ CStringA GetContentType(CString fn, CAtlList<CString>* redir)
             CStringA hdr;
             hdr.Format(
                 "GET %s HTTP/1.0\r\n"
-                "User-Agent: Media Player Classic\r\n"
+                "User-Agent: MPC-HC\r\n"
                 "Host: %s\r\n"
                 "Accept: */*\r\n"
                 "\r\n", path, host);
@@ -2118,7 +2118,7 @@ bool CMPlayerCApp::SetLanguage(const LanguageResource& languageResource, bool sh
         if (hMod == NULL) { // The dll failed to load for some reason
             if (showErrorMsg) {
                 MessageBox(NULL, _T("Error loading the chosen language.\n\nPlease reinstall MPC-HC."),
-                           _T("Media Player Classic - Home Cinema"), MB_ICONWARNING | MB_OK);
+                           _T("MPC-HC"), MB_ICONWARNING | MB_OK);
             }
         } else { // Check if the version of the resource dll is correct
             CString strSatVersion = CFileVersionInfo::GetFileVersionStr(languageResource.dllPath);
@@ -2135,7 +2135,7 @@ bool CMPlayerCApp::SetLanguage(const LanguageResource& languageResource, bool sh
                 if (showErrorMsg) {
                     // This message should stay in English!
                     int sel = MessageBox(NULL, _T("Your language pack will not work with this version.\n\nDo you want to visit the download page to get a full package including the translations?"),
-                                         _T("Media Player Classic - Home Cinema"), MB_ICONWARNING | MB_YESNO);
+                                         _T("MPC-HC"), MB_ICONWARNING | MB_YESNO);
                     if (sel == IDYES) {
                         ShellExecute(NULL, _T("open"), _T("http://mpc-hc.sourceforge.net/downloads/"), NULL, NULL, SW_SHOWDEFAULT);
                     }

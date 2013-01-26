@@ -1,5 +1,5 @@
 /*
- * (C) 2006-2012 see Authors.txt
+ * (C) 2006-2013 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -66,7 +66,7 @@ namespace DSObjects
                 if (riid == __uuidof(IBasicVideo2)) {
                     return GetInterface((IBasicVideo2*)this, ppv);
                 }
-                if (riid == __uuidof(IVMRffdshow9)) { // Support ffdshow queueing. We show ffdshow that this is patched Media Player Classic.
+                if (riid == __uuidof(IVMRffdshow9)) { // Support ffdshow queueing. We show ffdshow that this is patched MPC-HC.
                     return GetInterface((IVMRffdshow9*)this, ppv);
                 }
                 /*if (riid == __uuidof(IVMRWindowlessControl))

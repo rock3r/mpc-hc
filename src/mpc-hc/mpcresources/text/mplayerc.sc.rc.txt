@@ -92,7 +92,7 @@ END
 
 BEGIN DIALOGEX IDD_MEDIATYPES_DLG LINES 12
 4		"警告"
-7		"Media Player Classic - Home Cinema 无法渲染图像中的某些帧，您或许未在系统中安装所需的编码器或滤镜。"
+7		"MPC-HC 无法渲染图像中的某些帧，您或许未在系统中安装所需的编码器或滤镜。"
 8		"以下为无法查找到可用滤镜的接口(pin)信息: "
 11		"关闭"
 END

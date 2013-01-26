@@ -1051,7 +1051,7 @@ void CMainFrame::ShowTrayIcon(bool fShow)
             tnid.hIcon = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_MAINFRAME), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
             tnid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
             tnid.uCallbackMessage = WM_NOTIFYICON;
-            StringCchCopy(tnid.szTip, _countof(tnid.szTip), _T("Media Player Classic"));
+            StringCchCopy(tnid.szTip, _countof(tnid.szTip), _T("MPC-HC"));
             Shell_NotifyIcon(NIM_ADD, &tnid);
 
             m_fTrayIcon = true;
@@ -5061,7 +5061,7 @@ void CMainFrame::SaveThumbnails(LPCTSTR fn)
         rts.AddStyle(_T("thumbs"), style);
 
         CStringW str;
-        str.Format(L"{\\an9\\fs%d\\b1\\bord0\\shad0\\1c&Hffffff&}%s", infoheight - 10, width >= 550 ? L"Media Player Classic" : L"MPC");
+        str.Format(L"{\\an9\\fs%d\\b1\\bord0\\shad0\\1c&Hffffff&}%s", infoheight - 10, L"MPC-HC");
 
         rts.Add(str, true, 0, 1, _T("thumbs"), _T(""), _T(""), CRect(0, 0, 0, 0), -1);
 
@@ -14905,7 +14905,7 @@ afx_msg void CMainFrame::OnLanguage(UINT nID)
 
     if (nID == ID_LANGUAGE_HEBREW) { // Show a warning when switching to Hebrew (must not be translated)
         MessageBox(_T("The Hebrew translation will be correctly displayed (with a right-to-left layout) after restarting the application.\n"),
-                   _T("Media Player Classic - Home Cinema"), MB_ICONINFORMATION | MB_OK);
+                   _T("MPC-HC"), MB_ICONINFORMATION | MB_OK);
     }
 
     CMPlayerCApp::SetLanguage(CMPlayerCApp::GetLanguageResourceByResourceID(nID));

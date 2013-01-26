@@ -1409,7 +1409,7 @@ void CPlayerPlaylistBar::OnContextMenu(CWnd* /*pWnd*/, CPoint p)
         case M_SAVEAS: {
             CSaveTextFileDialog fd(
                 CTextFile::DEFAULT_ENCODING, NULL, NULL,
-                _T("Media Player Classic playlist (*.mpcpl)|*.mpcpl|Playlist (*.pls)|*.pls|Winamp playlist (*.m3u)|*.m3u|Windows Media playlist (*.asx)|*.asx||"),
+                _T("MPC-HC playlist (*.mpcpl)|*.mpcpl|Playlist (*.pls)|*.pls|Winamp playlist (*.m3u)|*.m3u|Windows Media playlist (*.asx)|*.asx||"),
                 this);
 
             if (fd.DoModal() != IDOK) {

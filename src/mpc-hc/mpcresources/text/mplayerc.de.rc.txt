@@ -1,5 +1,5 @@
 BEGIN DIALOGEX IDD_ABOUTBOX LINES 21
-3		"Über Media Player Classic - Home Cinema"
+3		"Über MPC-HC"
 8		"Copyright © 2002-2013 MPC-HC Team, siehe Authors.txt Datei"
 10		"Version :"
 11		"OK"
@@ -92,7 +92,7 @@ END
 
 BEGIN DIALOGEX IDD_MEDIATYPES_DLG LINES 12
 4		"Warnung"
-7		"Media Player Classic - Home Cinema konnte einige Pins im Filter-Graph nicht verbinden. Möglicherweise\nsind notwendige Codecs, oder Filter nicht installiert."
+7		"MPC-HC konnte einige Pins im Filter-Graph nicht verbinden. Möglicherweise\nsind notwendige Codecs, oder Filter nicht installiert."
 8		"Für diese(n) Pin(s) wurde(n) kein Filter gefunden:"
 11		"&Schließen"
 END
@@ -1290,7 +1290,7 @@ STRING IDS_BOOST_OSD		"Klangverstärker: +%.1f dB"
 STRING IDS_BRIGHTNESS_DEC		"Helligkeit verringern"
 STRING IDS_BRIGHTNESS_INC		"Helligkeit erhöhen"
 STRING IDS_CANCEL		"Abbrechen"
-STRING IDS_CANNOT_CHANGE_FORMAT		"Media Player Classic - Home Cinema benötigt Administrator Rechte, um die Datei-Erweitungen zuweisen zu können. Bestätigen Sie die Zuweisung der Administratorrechte mittels eines Klicks auf den ""Administrator"" Knopf."
+STRING IDS_CANNOT_CHANGE_FORMAT		"MPC-HC benötigt Administrator Rechte, um die Datei-Erweitungen zuweisen zu können. Bestätigen Sie die Zuweisung der Administratorrechte mittels eines Klicks auf den ""Administrator"" Knopf."
 STRING IDS_CAPTURE_ERROR		"Aufnahme Fehler"
 STRING IDS_CAPTURE_ERROR_ADD_BUFFER		"Der %s Buffer Filter konnte nicht zum Diagramm hinzugefügt werden."
 STRING IDS_CAPTURE_ERROR_ADD_ENCODER		"Der %s Encoder Filter konnte nicht zum Diagramm hinzugefügt werden."

@@ -1,6 +1,6 @@
 /*
  * (C) 2003-2006 Gabest
- * (C) 2006-2012 see Authors.txt
+ * (C) 2006-2013 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -35,10 +35,10 @@
 #define PROGID _T("mplayerc")
 #endif // _WIN64
 
-LPCTSTR CFileAssoc::strRegisteredAppName  = _T("Media Player Classic");
+LPCTSTR CFileAssoc::strRegisteredAppName  = _T("MPC-HC");
 LPCTSTR CFileAssoc::strOldAssocKey        = _T("PreviousRegistration");
-LPCTSTR CFileAssoc::strRegisteredAppKey   = _T("Software\\Clients\\Media\\Media Player Classic\\Capabilities");
-LPCTSTR CFileAssoc::strRegAppFileAssocKey = _T("Software\\Clients\\Media\\Media Player Classic\\Capabilities\\FileAssociations");
+LPCTSTR CFileAssoc::strRegisteredAppKey   = _T("Software\\Clients\\Media\\MPC-HC\\Capabilities");
+LPCTSTR CFileAssoc::strRegAppFileAssocKey = _T("Software\\Clients\\Media\\MPC-HC\\Capabilities\\FileAssociations");
 
 bool CFileAssoc::m_bNoRecentDocs = false;
 
@@ -167,7 +167,7 @@ bool CFileAssoc::RegisterApp()
         CRegKey key;
 
         if (ERROR_SUCCESS == key.Open(HKEY_LOCAL_MACHINE, _T("SOFTWARE\\RegisteredApplications"))) {
-            key.SetStringValue(_T("Media Player Classic"), strRegisteredAppKey);
+            key.SetStringValue(_T("MPC-HC"), strRegisteredAppKey);
 
             if (ERROR_SUCCESS == key.Create(HKEY_LOCAL_MACHINE, strRegisteredAppKey)) {
                 // ==>>  TODO icon !!!
@@ -642,7 +642,7 @@ bool CFileAssoc::RegisterAutoPlay(autoplay_t ap, bool bRegister)
             return false;
         }
         key.SetStringValue(_T("Action"), ResStr(handlers[i].action));
-        key.SetStringValue(_T("Provider"), _T("Media Player Classic"));
+        key.SetStringValue(_T("Provider"), _T("MPC-HC"));
         key.SetStringValue(_T("InvokeProgID"), _T("MediaPlayerClassic.Autorun"));
         key.SetStringValue(_T("InvokeVerb"), _T("Play") + handlers[i].verb);
         key.SetStringValue(_T("DefaultIcon"), exe + _T(",0"));
