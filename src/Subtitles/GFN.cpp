@@ -38,12 +38,12 @@ static TCHAR* ext[3][_countof(exttypestr)] = {
     },
     {
         _T(".*.srt"), _T(".*.sub"), _T(".*.smi"), _T(".*.psb"),
-        _T(".*.ssa"), _T(".*.ass"), _T(".*.idx"), _T(".*.usf"),
+        _T(".*.ssa"), _T(".*.ass"), _T(".*.dummyidx"), _T(".*.usf"),
         _T(".*.xss"), _T(".*.txt"), _T(".*.rt"), _T(".*.sup")
     },
     {
         _T("-*.srt"), _T("-*.sub"), _T("-*.smi"), _T("-*.psb"),
-        _T("-*.ssa"), _T("-*.ass"), _T("-*.idx"), _T("-*.usf"),
+        _T("-*.ssa"), _T("-*.ass"), _T("-*.dummyidx"), _T("-*.usf"),
         _T("-*.xss"), _T("-*.txt"), _T("-*.rt"), _T("-*.sup")
     },
 };
@@ -53,18 +53,31 @@ static int SubFileCompare(const void* elem1, const void* elem2)
     return ((SubFile*)elem1)->fn.CompareNoCase(((SubFile*)elem2)->fn);
 }
 
+// HACK this comes from VSS DirectVobSub mod
+bool IsSubtitleFilename(CString fn) {
+    int extnum = _countof(exttypestr);
+    for(int i = 0; i < extnum; i++) {
+        CString ext = exttypestr[i];
+        if(fn.Right(ext.GetLength()).CompareNoCase(ext) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 void GetSubFileNames(CString fn, CAtlArray<CString>& paths, CAtlArray<SubFile>& ret)
 {
     ret.RemoveAll();
 
     int extlistnum = _countof(ext);
-    int extsubnum  = _countof(ext[0]);
+    int extsubnum = _countof(ext[0]);
 
     fn.Replace('\\', '/');
 
     bool fWeb = false;
     {
-        //int i = fn.Find(_T("://"));
+        // int i = fn.Find(_T("://"));
         int i = fn.Find(_T("http://"));
         if (i > 0) {
             fn = _T("http") + fn.Mid(i);
@@ -109,7 +122,13 @@ void GetSubFileNames(CString fn, CAtlArray<CString>& paths, CAtlArray<SubFile>& 
 
             bool fEmpty = true;
 
-            if ((hFile = FindFirstFile(path + title + _T("*"), &wfd)) != INVALID_HANDLE_VALUE) {
+            // HACK this comes from VSS DirectVobSub mod
+            //if ((hFile = FindFirstFile(path + title + _T("*"), &wfd)) != INVALID_HANDLE_VALUE)
+            {
+            CString fullPath = path;
+            fullPath += title;
+            fullPath += "*";
+            if((hFile = FindFirstFile(fullPath, &wfd)) != INVALID_HANDLE_VALUE)
                 do {
                     if (filename.CompareNoCase(wfd.cFileName) != 0) {
                         fEmpty = false;

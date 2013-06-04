@@ -42,3 +42,4 @@ typedef struct {
 } SubFile;
 
 extern void GetSubFileNames(CString fn, CAtlArray<CString>& paths, CAtlArray<SubFile>& ret);
+extern bool IsSubtitleFilename(CString fn);

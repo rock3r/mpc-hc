@@ -71,6 +71,7 @@ public:
 
     STDMETHODIMP JoinFilterGraph(IFilterGraph* pGraph, LPCWSTR pName);
     STDMETHODIMP QueryFilterInfo(FILTER_INFO* pInfo);
+    STDMETHODIMP QueryVendorInfo(LPWSTR* pVendorInfo);
 
     // CTransformFilter
     HRESULT SetMediaType(PIN_DIRECTION dir, const CMediaType* pMediaType),

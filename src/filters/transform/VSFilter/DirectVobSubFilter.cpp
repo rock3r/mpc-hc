@@ -138,6 +138,17 @@ STDMETHODIMP CDirectVobSubFilter::NonDelegatingQueryInterface(REFIID riid, void*
         __super::NonDelegatingQueryInterface(riid, ppv);
 }
 
+// HACK this comes from VSS DirectVobSub mod
+STDMETHODIMP CDirectVobSubFilter::QueryVendorInfo(LPWSTR* pVendorInfo) {
+    CheckPointer(pVendorInfo, E_POINTER);
+    
+    CStringW vendorInfo = CStringW("VSS Custom VSFilter v200");
+    if(!(*pVendorInfo = (WCHAR*)CoTaskMemAlloc((vendorInfo.GetLength() + 1) * sizeof(WCHAR))))
+        return E_OUTOFMEMORY;
+    wcscpy(*pVendorInfo, vendorInfo);
+    return S_OK;
+}
+
 // CBaseVideoFilter
 
 void CDirectVobSubFilter::GetOutputSize(int& w, int& h, int& arx, int& ary, int& RealWidth, int& RealHeight, int& vsfilter)
@@ -246,6 +257,8 @@ HRESULT CDirectVobSubFilter::Transform(IMediaSample* pIn)
 
     //
 
+    SubPicDesc spd = m_spd;
+
     CComPtr<IMediaSample> pOut;
     BYTE* pDataOut = nullptr;
     if (FAILED(hr = GetDeliveryBuffer(spd.w, spd.h, &pOut))
@@ -340,8 +353,14 @@ HRESULT CDirectVobSubFilter::JoinFilterGraph(IFilterGraph* pGraph, LPCWSTR pName
         if (!theApp.GetProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_SEENDIVXWARNING), 0)) {
             QWORD ver = CFileVersionInfo::GetFileVersionNum(_T("divx_c32.ax"));
             if (((ver >> 48) & 0xffff) == 4 && ((ver >> 32) & 0xffff) == 2) {
-                AfxMessageBox(IDS_DIVX_WARNING, MB_ICONWARNING | MB_OK, 0);
-                theApp.WriteProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_SEENDIVXWARNING), 1);
+                DWORD dwVersion = GetVersion();
+                DWORD dwWindowsMajorVersion = (DWORD)(LOBYTE(LOWORD(dwVersion)));
+                //DWORD dwWindowsMinorVersion = (DWORD)(HIBYTE(LOWORD(dwVersion)));
+
+                if (dwVersion < 0x80000000 && dwWindowsMajorVersion >= 5) {
+                    AfxMessageBox(IDS_DIVX_WARNING, MB_ICONWARNING | MB_OK, 0);
+                    theApp.WriteProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_SEENDIVXWARNING), 1);
+                }
             }
         }
 
@@ -432,6 +451,7 @@ HRESULT CDirectVobSubFilter::CompleteConnect(PIN_DIRECTION dir, IPin* pReceivePi
         // needed when we have a decoder with a version number of 3.x
         if (SUCCEEDED(m_pGraph->FindFilterByName(L"DivX MPEG-4 DVD Video Decompressor ", &pFilter))
                 && (CFileVersionInfo::GetFileVersionNum(_T("divx_c32.ax")) >> 48) <= 4
+                || SUCCEEDED(m_pGraph->FindFilterByName(L"Microcrap MPEG-4 Video Decompressor", &pFilter))
                 || SUCCEEDED(m_pGraph->FindFilterByName(L"Microsoft MPEG-4 Video Decompressor", &pFilter))
                 && (CFileVersionInfo::GetFileVersionNum(_T("mpg4ds32.ax")) >> 48) <= 3) {
             m_fMSMpeg4Fix = true;
@@ -727,7 +747,8 @@ void CDirectVobSubFilter::UpdatePreferedLanguages(CString l)
 
     // move "Hide subtitles" to the last position if it wasn't our selection
 
-    CString hidesubs = ResStr(IDS_M_HIDESUBTITLES);
+    CString hidesubs;
+    hidesubs.LoadString(IDS_M_HIDESUBTITLES);
 
     for (k = 1; k < j; k++) {
         if (!langs[k].CompareNoCase(hidesubs)) {
@@ -1434,6 +1455,17 @@ void CDirectVobSubFilter2::GetRidOfInternalScriptRenderer()
 
 ///////////////////////////////////////////////////////////////////////////////
 
+// HACK this comes from VSS DirectVobSub mod
+bool SubtitleFileExists(CString fn) {
+    if(FILE* f = _tfopen(fn, _T("rb+"))) 
+    {
+        fclose(f);
+        return true;
+    }
+    return false;
+}
+
+
 bool CDirectVobSubFilter::Open()
 {
     AFX_MANAGE_STATE(AfxGetStaticModuleState());
@@ -1444,19 +1476,40 @@ bool CDirectVobSubFilter::Open()
 
     m_frd.files.RemoveAll();
 
-    CAtlArray<CString> paths;
-
-    for (ptrdiff_t i = 0; i < 10; i++) {
-        CString tmp;
-        tmp.Format(IDS_RP_PATH, i);
-        CString path = theApp.GetProfileString(ResStr(IDS_R_DEFTEXTPATHES), tmp);
-        if (!path.IsEmpty()) {
-            paths.Add(path);
-        }
-    }
+    // HACK this comes from VSS DirectVobSub mod
+    //CAtlArray<CString> paths;
 
     CAtlArray<SubFile> ret;
-    GetSubFileNames(m_FileName, paths, ret);
+    if (IsSubtitleFilename(m_FileName) && SubtitleFileExists(m_FileName)) {
+        // We are loading a subtitle file directly, no need to search for the subtitle file name
+        SubFile subFile;
+        subFile.fn = m_FileName;
+        ret.Add(subFile);
+    } else {
+        // We are loading subtitles based on the video file name
+        CAtlArray<CString> paths;
+
+        // HACK this comes from VSS DirectVobSub mod
+        //for (ptrdiff_t i = 0; i < 10; i++) {
+        //  CString tmp;
+        //  tmp.Format(IDS_RP_PATH, i);
+        //  CString path = theApp.GetProfileString(ResStr(IDS_R_DEFTEXTPATHES), tmp);
+        //  if (!path.IsEmpty()) paths.Add(path);
+
+        for(int ptrdiff_t = 0; ptrdiff_t < 10; ptrdiff_t++) {
+            CString tmp;
+            tmp.Format(IDS_RP_PATH, ptrdiff_t);
+            CString path = theApp.GetProfileString(ResStr(IDS_R_DEFTEXTPATHES), tmp);
+            if (!path.IsEmpty()) {
+                paths.Add(path);
+            }
+        }
+
+        // HACK this comes from VSS DirectVobSub mod
+        //CAtlArray<SubFile> ret;
+        GetSubFileNames(m_FileName, paths, ret);
+
+}
 
     for (size_t i = 0; i < ret.GetCount(); i++) {
         if (m_frd.files.Find(ret[i].fn)) {
@@ -1466,6 +1519,16 @@ bool CDirectVobSubFilter::Open()
         CComPtr<ISubStream> pSubStream;
 
         if (!pSubStream) {
+            // HACK this comes from VSS DirectVobSub mod
+            CAutoPtr<CRenderedTextSubtitle> pRTS(new CRenderedTextSubtitle(&m_csSubLock));
+            if (pRTS && pRTS->Open(ret[i].fn, DEFAULT_CHARSET) && pRTS->GetStreamCount() > 0) {
+                pSubStream = pRTS.Detach();
+                m_frd.files.AddTail(ret[i].fn + _T(".style"));
+            }
+        }
+        
+        if (!pSubStream) 
+        {
             CAutoPtr<CVobSubFile> pVSF(DEBUG_NEW CVobSubFile(&m_csSubLock));
             if (pVSF && pVSF->Open(ret[i].fn) && pVSF->GetStreamCount() > 0) {
                 pSubStream = pVSF.Detach();
@@ -1474,10 +1537,10 @@ bool CDirectVobSubFilter::Open()
         }
 
         if (!pSubStream) {
-            CAutoPtr<CRenderedTextSubtitle> pRTS(DEBUG_NEW CRenderedTextSubtitle(&m_csSubLock));
-            if (pRTS && pRTS->Open(ret[i].fn, DEFAULT_CHARSET) && pRTS->GetStreamCount() > 0) {
-                pSubStream = pRTS.Detach();
-                m_frd.files.AddTail(ret[i].fn + _T(".style"));
+            // HACK this comes from VSS DirectVobSub mod
+            CAutoPtr<ssf::CRenderer> pSSF(new ssf::CRenderer(&m_csSubLock));
+            if (pSSF && pSSF->Open(ret[i].fn) && pSSF->GetStreamCount() > 0) {
+                pSubStream = pSSF.Detach();
             }
         }
 
@@ -1682,6 +1745,8 @@ void CDirectVobSubFilter::Post_EC_OLE_EVENT(CString str, DWORD_PTR nSubtitleId)
 
 void CDirectVobSubFilter::SetupFRD(CStringArray& paths, CAtlArray<HANDLE>& handles)
 {
+
+    #ifdef SUB_RELOADER 
     CAutoLock cAutolock(&m_csSubLock);
 
     for (size_t i = 2; i < handles.GetCount(); i++) {
@@ -1725,12 +1790,17 @@ void CDirectVobSubFilter::SetupFRD(CStringArray& paths, CAtlArray<HANDLE>& handl
             }
         }
     }
+    #endif
 }
 
 DWORD CDirectVobSubFilter::ThreadProc()
 {
-    SetThreadPriority(m_hThread, THREAD_PRIORITY_LOWEST/*THREAD_PRIORITY_BELOW_NORMAL*/);
+    // HACK this comes from VSS DirectVobSub mod
+    //SetThreadPriority(m_hThread, THREAD_PRIORITY_LOWEST/*THREAD_PRIORITY_BELOW_NORMAL*/);
 
+    SetThreadPriority(m_hThread, THREAD_PRIORITY_LOWEST);
+
+    #ifdef SUB_RELOADER
     CStringArray paths;
     CAtlArray<HANDLE> handles;
 
@@ -1801,6 +1871,8 @@ DWORD CDirectVobSubFilter::ThreadProc()
     for (size_t i = 2; i < handles.GetCount(); i++) {
         FindCloseChangeNotification(handles[i]);
     }
+
+    #endif
 
     return 0;
 }
