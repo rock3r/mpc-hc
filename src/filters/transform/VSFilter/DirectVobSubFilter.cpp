@@ -255,10 +255,6 @@ HRESULT CDirectVobSubFilter::Transform(IMediaSample* pIn)
         spd.bits = m_pTempPicBuff;
     }
 
-    //
-
-    SubPicDesc spd = m_spd;
-
     CComPtr<IMediaSample> pOut;
     BYTE* pDataOut = nullptr;
     if (FAILED(hr = GetDeliveryBuffer(spd.w, spd.h, &pOut))
@@ -1537,11 +1533,12 @@ bool CDirectVobSubFilter::Open()
         }
 
         if (!pSubStream) {
-            // HACK this comes from VSS DirectVobSub mod
-            CAutoPtr<ssf::CRenderer> pSSF(new ssf::CRenderer(&m_csSubLock));
-            if (pSSF && pSSF->Open(ret[i].fn) && pSSF->GetStreamCount() > 0) {
-                pSubStream = pSSF.Detach();
-            }
+			//TODO: restore this once we've resolved the ssf and CRenderer refs
+            //// HACK this comes from VSS DirectVobSub mod
+            //CAutoPtr<ssf::CRenderer> pSSF(new ssf::CRenderer(&m_csSubLock));
+            //if (pSSF && pSSF->Open(ret[i].fn) && pSSF->GetStreamCount() > 0) {
+            //    pSubStream = pSSF.Detach();
+            //}
         }
 
         if (pSubStream) {
@@ -1795,10 +1792,7 @@ void CDirectVobSubFilter::SetupFRD(CStringArray& paths, CAtlArray<HANDLE>& handl
 
 DWORD CDirectVobSubFilter::ThreadProc()
 {
-    // HACK this comes from VSS DirectVobSub mod
-    //SetThreadPriority(m_hThread, THREAD_PRIORITY_LOWEST/*THREAD_PRIORITY_BELOW_NORMAL*/);
-
-    SetThreadPriority(m_hThread, THREAD_PRIORITY_LOWEST);
+    SetThreadPriority(m_hThread, THREAD_PRIORITY_LOWEST/*THREAD_PRIORITY_BELOW_NORMAL*/);
 
     #ifdef SUB_RELOADER
     CStringArray paths;
