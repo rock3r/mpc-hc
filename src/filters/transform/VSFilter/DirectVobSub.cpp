@@ -376,7 +376,7 @@ STDMETHODIMP CDirectVobSub::put_TextSettings(void* lf, int lflen, COLORREF color
 
     m_defStyle.colors[0] = color;
     m_defStyle.shadowDepthX = m_defStyle.shadowDepthY = fShadow ? 2 : 0;
-    m_defStyle.outlineWidthX = m_defStyle.outlineWidthY = fOutline ? 2 : 0;
+    m_defStyle.outlineWidthX = m_defStyle.outlineWidthY = fOutline ? 3 : 0;
 
     return S_OK;
 
