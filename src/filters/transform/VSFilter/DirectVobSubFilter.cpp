@@ -1472,9 +1472,6 @@ bool CDirectVobSubFilter::Open()
 
     m_frd.files.RemoveAll();
 
-    // HACK this comes from VSS DirectVobSub mod
-    //CAtlArray<CString> paths;
-
     CAtlArray<SubFile> ret;
     if (IsSubtitleFilename(m_FileName) && SubtitleFileExists(m_FileName)) {
         // We are loading a subtitle file directly, no need to search for the subtitle file name
@@ -1485,13 +1482,6 @@ bool CDirectVobSubFilter::Open()
         // We are loading subtitles based on the video file name
         CAtlArray<CString> paths;
 
-        // HACK this comes from VSS DirectVobSub mod
-        //for (ptrdiff_t i = 0; i < 10; i++) {
-        //  CString tmp;
-        //  tmp.Format(IDS_RP_PATH, i);
-        //  CString path = theApp.GetProfileString(ResStr(IDS_R_DEFTEXTPATHES), tmp);
-        //  if (!path.IsEmpty()) paths.Add(path);
-
         for(int ptrdiff_t = 0; ptrdiff_t < 10; ptrdiff_t++) {
             CString tmp;
             tmp.Format(IDS_RP_PATH, ptrdiff_t);
@@ -1501,11 +1491,8 @@ bool CDirectVobSubFilter::Open()
             }
         }
 
-        // HACK this comes from VSS DirectVobSub mod
-        //CAtlArray<SubFile> ret;
         GetSubFileNames(m_FileName, paths, ret);
-
-}
+	}
 
     for (size_t i = 0; i < ret.GetCount(); i++) {
         if (m_frd.files.Find(ret[i].fn)) {
@@ -1515,7 +1502,6 @@ bool CDirectVobSubFilter::Open()
         CComPtr<ISubStream> pSubStream;
 
         if (!pSubStream) {
-            // HACK this comes from VSS DirectVobSub mod
             CAutoPtr<CRenderedTextSubtitle> pRTS(new CRenderedTextSubtitle(&m_csSubLock));
             if (pRTS && pRTS->Open(ret[i].fn, DEFAULT_CHARSET) && pRTS->GetStreamCount() > 0) {
                 pSubStream = pRTS.Detach();
@@ -1523,8 +1509,7 @@ bool CDirectVobSubFilter::Open()
             }
         }
         
-        if (!pSubStream) 
-        {
+        if (!pSubStream) {
             CAutoPtr<CVobSubFile> pVSF(DEBUG_NEW CVobSubFile(&m_csSubLock));
             if (pVSF && pVSF->Open(ret[i].fn) && pVSF->GetStreamCount() > 0) {
                 pSubStream = pVSF.Detach();
@@ -1533,12 +1518,11 @@ bool CDirectVobSubFilter::Open()
         }
 
         if (!pSubStream) {
-			//TODO: restore this once we've resolved the ssf and CRenderer refs
-            //// HACK this comes from VSS DirectVobSub mod
-            //CAutoPtr<ssf::CRenderer> pSSF(new ssf::CRenderer(&m_csSubLock));
-            //if (pSSF && pSSF->Open(ret[i].fn) && pSSF->GetStreamCount() > 0) {
-            //    pSubStream = pSSF.Detach();
-            //}
+			CAutoPtr<CRenderedTextSubtitle> pRTS(DEBUG_NEW CRenderedTextSubtitle(&m_csSubLock));
+            if (pRTS && pRTS->Open(ret[i].fn, DEFAULT_CHARSET) && pRTS->GetStreamCount() > 0) {
+                pSubStream = pRTS.Detach();
+                m_frd.files.AddTail(ret[i].fn + _T(".style"));
+            }
         }
 
         if (pSubStream) {
