@@ -138,11 +138,10 @@ STDMETHODIMP CDirectVobSubFilter::NonDelegatingQueryInterface(REFIID riid, void*
         __super::NonDelegatingQueryInterface(riid, ppv);
 }
 
-// HACK this comes from VSS DirectVobSub mod
 STDMETHODIMP CDirectVobSubFilter::QueryVendorInfo(LPWSTR* pVendorInfo) {
     CheckPointer(pVendorInfo, E_POINTER);
     
-    CStringW vendorInfo = CStringW("VSS Custom VSFilter v200");
+    CStringW vendorInfo = CStringW("VSS Custom VSFilter v201");
     if(!(*pVendorInfo = (WCHAR*)CoTaskMemAlloc((vendorInfo.GetLength() + 1) * sizeof(WCHAR))))
         return E_OUTOFMEMORY;
     wcscpy(*pVendorInfo, vendorInfo);
