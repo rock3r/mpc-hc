@@ -1502,14 +1502,6 @@ bool CDirectVobSubFilter::Open()
         CComPtr<ISubStream> pSubStream;
 
         if (!pSubStream) {
-            CAutoPtr<CRenderedTextSubtitle> pRTS(new CRenderedTextSubtitle(&m_csSubLock));
-            if (pRTS && pRTS->Open(ret[i].fn, DEFAULT_CHARSET) && pRTS->GetStreamCount() > 0) {
-                pSubStream = pRTS.Detach();
-                m_frd.files.AddTail(ret[i].fn + _T(".style"));
-            }
-        }
-        
-        if (!pSubStream) {
             CAutoPtr<CVobSubFile> pVSF(DEBUG_NEW CVobSubFile(&m_csSubLock));
             if (pVSF && pVSF->Open(ret[i].fn) && pVSF->GetStreamCount() > 0) {
                 pSubStream = pVSF.Detach();
