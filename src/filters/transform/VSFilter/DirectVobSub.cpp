@@ -382,6 +382,54 @@ STDMETHODIMP CDirectVobSub::put_TextSettings(void* lf, int lflen, COLORREF color
 
 }
 
+STDMETHODIMP CDirectVobSub::put_TextSettings2(void* lf, int lflen, COLORREF color1, COLORREF color2, COLORREF color3, COLORREF color4,
+                                                COLORREF alpha1, COLORREF alpha2, COLORREF alpha3, COLORREF alpha4,
+                                                int shadowDepthX, int shadowDepthY, int outlineWidthX, int outlineWidthY, int borderStyle)
+{
+    CAutoLock cAutoLock(&m_propsLock);
+
+    if (lf) {
+        if (lflen == sizeof(LOGFONTA)) {
+            m_defStyle.fontName = ((LOGFONTA*)lf)->lfFaceName;
+        } else if (lflen == sizeof(LOGFONTW)) {
+            m_defStyle.fontName = ((LOGFONTW*)lf)->lfFaceName;
+        } else {
+            return E_INVALIDARG;
+        }
+
+        m_defStyle.charSet = ((LOGFONT*)lf)->lfCharSet;
+        m_defStyle.fItalic = !!((LOGFONT*)lf)->lfItalic;
+        m_defStyle.fontSize = ((LOGFONT*)lf)->lfHeight;
+        m_defStyle.fontWeight = ((LOGFONT*)lf)->lfWeight;
+        m_defStyle.fStrikeOut = !!((LOGFONT*)lf)->lfStrikeOut;
+        m_defStyle.fUnderline = !!((LOGFONT*)lf)->lfUnderline;
+
+        if (m_defStyle.fontSize < 0) {
+            HDC hdc = ::GetDC(0);
+            m_defStyle.fontSize = -m_defStyle.fontSize * 72 / GetDeviceCaps(hdc, LOGPIXELSY);
+            ::ReleaseDC(0, hdc);
+        }
+
+    }
+
+    m_defStyle.colors[0] = color1;
+    m_defStyle.colors[1] = color2;
+    m_defStyle.colors[2] = color3;
+    m_defStyle.colors[3] = color4;
+    m_defStyle.alpha[0] = alpha1;
+    m_defStyle.alpha[1] = alpha2;
+    m_defStyle.alpha[2] = alpha3;
+    m_defStyle.alpha[3] = alpha4;
+    m_defStyle.shadowDepthX = shadowDepthX;
+    m_defStyle.shadowDepthY = shadowDepthY;
+    m_defStyle.outlineWidthX = outlineWidthX; 
+    m_defStyle.outlineWidthY = outlineWidthY;
+    m_defStyle.borderStyle = borderStyle;
+
+    return S_OK;
+
+}
+
 STDMETHODIMP CDirectVobSub::get_Flip(bool* fPicture, bool* fSubtitles)
 {
     CAutoLock cAutoLock(&m_propsLock);
