@@ -346,6 +346,50 @@ STDMETHODIMP CDirectVobSub::get_TextSettings(void* lf, int lflen, COLORREF* colo
     return S_OK;
 }
 
+STDMETHODIMP CDirectVobSub::get_TextSettings2(void* lf, int lflen, COLORREF* color1, COLORREF* color2, COLORREF* color3, COLORREF* color4,
+                                              COLORREF* alpha1, COLORREF* alpha2, COLORREF* alpha3, COLORREF* alpha4,
+                                              int* shadowDepthX, int* shadowDepthY, int* outlineWidthX, int* outlineWidthY, int* borderStyle)
+{
+    CAutoLock cAutoLock(&m_propsLock);
+
+    if (lf) {
+        if (lflen == sizeof(LOGFONTA)) {
+            strncpy_s(((LOGFONTA*)lf)->lfFaceName, LF_FACESIZE, CStringA(m_defStyle.fontName), _TRUNCATE);
+        } else if (lflen == sizeof(LOGFONTW)) {
+            wcsncpy_s(((LOGFONTW*)lf)->lfFaceName, LF_FACESIZE, CStringW(m_defStyle.fontName), _TRUNCATE);
+        } else {
+            return E_INVALIDARG;
+        }
+
+        ((LOGFONT*)lf)->lfCharSet = m_defStyle.charSet;
+        ((LOGFONT*)lf)->lfItalic = m_defStyle.fItalic;
+        ((LOGFONT*)lf)->lfHeight = (LONG)m_defStyle.fontSize;
+        ((LOGFONT*)lf)->lfWeight = m_defStyle.fontWeight;
+        ((LOGFONT*)lf)->lfStrikeOut = m_defStyle.fStrikeOut;
+        ((LOGFONT*)lf)->lfUnderline = m_defStyle.fUnderline;
+    }
+    
+    *color1 = m_defStyle.colors[0];
+    *color2 = m_defStyle.colors[1];
+    *color3 = m_defStyle.colors[2];
+    *color4 = m_defStyle.colors[3];
+
+    *alpha1 = m_defStyle.alpha[0];
+    *alpha2 = m_defStyle.alpha[1];
+    *alpha3 = m_defStyle.alpha[2];
+    *alpha4 = m_defStyle.alpha[3];
+    
+    *shadowDepthX = m_defStyle.shadowDepthX;
+    *shadowDepthY = m_defStyle.shadowDepthY;
+    *outlineWidthX = m_defStyle.outlineWidthX;
+    *outlineWidthY = m_defStyle.outlineWidthY;
+    
+    *borderStyle = m_defStyle.borderStyle;
+
+    return S_OK;
+}
+
+
 STDMETHODIMP CDirectVobSub::put_TextSettings(void* lf, int lflen, COLORREF color, bool fShadow, bool fOutline, bool fAdvancedRenderer)
 {
     CAutoLock cAutoLock(&m_propsLock);
