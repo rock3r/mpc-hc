@@ -66,7 +66,7 @@ bool IsSubtitleFilename(CString fn) {
 }
 
 
-void GetSubFileNames(CString fn, CAtlArray<CString>& paths, CAtlArray<SubFile>& ret)
+void GetSubFileNames(CString fn, const CAtlArray<CString>& paths, CAtlArray<SubFile>& ret)
 {
     ret.RemoveAll();
 
@@ -124,11 +124,7 @@ void GetSubFileNames(CString fn, CAtlArray<CString>& paths, CAtlArray<SubFile>& 
 
             // HACK this comes from VSS DirectVobSub mod
             //if ((hFile = FindFirstFile(path + title + _T("*"), &wfd)) != INVALID_HANDLE_VALUE)
-            {
-            CString fullPath = path;
-            fullPath += title;
-            fullPath += "*";
-            if((hFile = FindFirstFile(fullPath, &wfd)) != INVALID_HANDLE_VALUE)
+            if ((hFile = FindFirstFile(path + title + _T("*"), &wfd)) != INVALID_HANDLE_VALUE) {
                 do {
                     if (filename.CompareNoCase(wfd.cFileName) != 0) {
                         fEmpty = false;

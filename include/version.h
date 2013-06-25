@@ -53,7 +53,7 @@
 
 #define MPC_VERSION_MAJOR   1
 #define MPC_VERSION_MINOR   6
-#define MPC_VERSION_PATCH   8
+#define MPC_VERSION_PATCH   9
 
 #define MPC_BETA_RELEASE    1
 
