@@ -107,6 +107,25 @@ public IUnknown
                                 bool* fAdvancedRenderer
                                ) PURE;
 
+    
+    STDMETHOD(get_TextSettings2)(THIS_
+                                 void* lf,
+                                 int lflen,
+                                 COLORREF* color1,
+                                 COLORREF* color2,
+                                 COLORREF* color3,
+                                 COLORREF* color4,
+                                 COLORREF* alpha1,
+                                 COLORREF* alpha2,
+                                 COLORREF* alpha3,
+                                 COLORREF* alpha4,
+                                 int* shadowDepthX,
+                                 int* shadowDepthY,
+                                 int* outlineWidthX,
+                                 int* outlineWidthY,
+                                 int* borderStyle
+                                ) PURE;
+
     STDMETHOD(put_TextSettings)(THIS_
                                 void* lf,
                                 int lflen,

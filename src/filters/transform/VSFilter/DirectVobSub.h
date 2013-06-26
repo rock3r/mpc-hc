@@ -85,7 +85,7 @@ public:
                                    COLORREF* alpha1, COLORREF* alpha2, COLORREF* alpha3, COLORREF* alpha4,
                                    int* shadowDepthX, int* shadowDepthY, int* outlineWidthX, int* outlineWidthY, int* borderStyle);
     STDMETHODIMP put_TextSettings(void* lf, int lflen, COLORREF color, bool fShadow, bool fOutline, bool fAdvancedRenderer);
-    STDMETHOD(put_TextSettings2)(void* lf, int lflen, COLORREF color1, COLORREF color2, COLORREF color3, COLORREF color4, 
+    STDMETHODIMP put_TextSettings2(void* lf, int lflen, COLORREF color1, COLORREF color2, COLORREF color3, COLORREF color4, 
                                  COLORREF alpha1, COLORREF alpha2, COLORREF alpha3, COLORREF alpha4, int shadowDepthX,
                                  int shadowDepthY, int outlineWidthX, int outlineWidthY, int borderStyle);
     STDMETHODIMP get_Flip(bool* fPicture, bool* fSubtitles);
